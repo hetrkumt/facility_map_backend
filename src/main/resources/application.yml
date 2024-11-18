@@ -1,0 +1,16 @@
+spring:
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    defer-datasource-initialization: true
+  h2:
+    console:
+      enabled: true
+  security:
+
+
+jwt:
+  issuer: Facilities-map-service
+  secret_key: dR2#7GkL*p9sZ4Q@8jXwF3mN!t6vB1aP
