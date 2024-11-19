@@ -21,19 +21,24 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     private final TokenAuthenticationManager tokenAuthenticationManager;
     private final AuthenticationProvider authenticationProvider;
     private final static String HEADER_AUTHORIZATION = "Authorization";
-    private final static String ACCESS_TOKEN_PREFIX = "accesstoken ";
+    private final static String ACCESS_TOKEN_PREFIX = "Bearer ";
 
     @Override
     protected void doFilterInternal(
             HttpServletRequest request,
             HttpServletResponse response,
             FilterChain filterChain) throws ServletException, IOException {
+        // 요청 정보 출력
+        logRequestDetails(request);
 
         String authorizationHeader = request.getHeader(HEADER_AUTHORIZATION);
+        System.out.println("authorizationHeader="+authorizationHeader);
         String token = getAccessToken(authorizationHeader);
+        System.out.println("Accesstoken="+token);
 
         if (token != null) {
             String refreshToken = tokenAuthenticationManager.getRefreshTokenFrom(token);
+            System.out.println(refreshToken);
             TokenValidationResult tokenValidationResult = tokenAuthenticationManager.validateToken(refreshToken);
 
             if (tokenValidationResult == TokenValidationResult.VALID) {
@@ -75,5 +80,16 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         return null;
     }
 
+    private void logRequestDetails(HttpServletRequest request) {
+        System.out.println("Request Method: " + request.getMethod());
+        System.out.println("Request URI: " + request.getRequestURI());
+        System.out.println("Request Headers:");
+        request.getHeaderNames().asIterator().forEachRemaining(headerName ->
+                System.out.println(headerName + ": " + request.getHeader(headerName))
+        );
+        // 필요한 경우, 추가 정보를 출력할 수 있습니다.
+    }
+
 
 }
+

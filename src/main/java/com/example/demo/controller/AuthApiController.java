@@ -10,6 +10,7 @@ import com.example.demo.repository.RefreshTokenRepository;
 import com.example.demo.service.LoginService;
 import com.example.demo.service.ReviewService;
 import com.example.demo.service.UserService;
+
 import com.example.demo.util.Authentication.AuthenticationProvider;
 import com.example.demo.util.Authentication.loginAuthentication.AuthenticationResult;
 import com.example.demo.util.jwt.JwtProvider;
@@ -17,9 +18,9 @@ import com.example.demo.util.login.LoginSuccessHandler;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.bind.annotation.*;
 
@@ -84,10 +85,17 @@ public class AuthApiController {
     }
 
     private ResponseEntity<String> handleAuthenticationResult(AuthenticationResult result) {
+        HttpHeaders headers = new HttpHeaders();
         switch (result) {
             case SUCCESS:
                 String newAccessToken = loginSuccessHandler.makeAccessTokenOnAuthenticationSuccess();
-                return ResponseEntity.ok("Authentication successful. New Access Token: " + newAccessToken);
+                headers.add("Authorization", "Bearer " + newAccessToken);
+                // 디버그 로그 추가
+                System.out.println("Access Token: " + newAccessToken);
+                System.out.println("Response Headers: " + headers);
+                return ResponseEntity.ok()
+                        .headers(headers)
+                        .body("Authentication successful.");
             case USER_NOT_FOUND:
                 return ResponseEntity.status(404).body("User not found");
             case INVALID_PASSWORD:
@@ -97,19 +105,25 @@ public class AuthApiController {
         }
     }
 
+
+
     @PostMapping("/logout")
     public ResponseEntity<String> logout(HttpServletRequest request, HttpServletResponse response) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Authentication authentication = authenticationProvider.getAuthenticationFromSecurityContextHolder();
         if (authentication != null) {
-            new SecurityContextLogoutHandler().logout(request, response, authentication);
+            User user = authenticationProvider.getUserInfoFromSecurityContextHolder();
 
             // RefreshToken 삭제
-            User user = (User) authentication.getPrincipal();
+            System.out.println("User ID: " + user.getId()); // 로그 추가
             refreshTokenRepository.deleteByUserId(user.getId());
 
-            // 응답 전송
+            new SecurityContextLogoutHandler().logout(request, response, authentication);
+
+            System.out.println("Logout successful for user ID: " + user.getId()); // 로그 추가
             return ResponseEntity.ok("Logout successful");
         }
+
+        System.out.println("No user is currently logged in"); // 로그 추가
         return ResponseEntity.status(400).body("No user is currently logged in");
     }
 

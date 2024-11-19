@@ -3,6 +3,7 @@ package com.example.demo.util.Authentication;
 import com.example.demo.domain.User;
 import com.example.demo.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -20,7 +21,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Component
 public class AuthenticationProvider {
-    UserRepository userRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     public Authentication getAuthenticationFromSecurityContextHolder(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -42,15 +44,19 @@ public class AuthenticationProvider {
         String userEmailOrSnsId = user.getEmail();
         if (user.getEmail() != null) {
             userEmailOrSnsId = user.getEmail();
+            Authentication preAuth = new UsernamePasswordAuthenticationToken(
+                    userEmailOrSnsId,
+                    user.getPassword());
+            return preAuth;
         }
         else {
             userEmailOrSnsId = user.getSnsId();
+            Authentication preAuth = new UsernamePasswordAuthenticationToken(
+                    userEmailOrSnsId,
+                    "");
+            return preAuth;
         }
-        Authentication preAuth = new UsernamePasswordAuthenticationToken(
-                userEmailOrSnsId,
-                user.getPassword()
-        );
-        return preAuth;
+
     }
 
     public Authentication makeAuthenticationFrom(User user){

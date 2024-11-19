@@ -30,7 +30,7 @@ public class User implements UserDetails {
     @Column(unique = true)
     private String nickname;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String provider;
 
     @Column(nullable = true, unique = true)

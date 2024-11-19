@@ -8,7 +8,6 @@ import com.example.demo.util.Authentication.tokenAuthentication.TokenAuthenticat
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
@@ -29,20 +28,21 @@ import static org.springframework.boot.autoconfigure.security.servlet.PathReques
 public class WebSecurityConfig {
 
     private final JwtProvider tokenProvider;
-    private final TokenAuthenticationManager TokenAuthenticationManager;
+    private final TokenAuthenticationManager tokenAuthenticationManager;
     private final AuthenticationProvider authenticationProvider;
     private final RefreshTokenRepository refreshTokenRepository;
     private final UserService userService;
 
     @Bean
-    public WebSecurityCustomizer configure() {
+    public WebSecurityCustomizer webSecurityCustomizer() {
         return (web) -> web.ignoring()
+                .requestMatchers("/img/**", "/css/**", "/js/**")
                 .requestMatchers(toH2Console())
-                .requestMatchers("/img/**", "/css/**", "/js/**");
+                .requestMatchers("/static/**");
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf().disable()
                 .httpBasic().disable()
                 .formLogin().disable();
@@ -52,22 +52,12 @@ public class WebSecurityConfig {
 
         http.addFilterBefore(tokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
+        http.authorizeRequests()
+                .requestMatchers("/api").authenticated()
+                .anyRequest().permitAll();
 
-
-        http.logout()
-                .logoutUrl("/api/auth/logout")
-                .logoutSuccessHandler((request, response, authentication) -> {
-                    // SecurityContextHolder 초기화
-                    SecurityContextHolder.clearContext();
-                    // 세션 무효화
-                    HttpSession session = request.getSession(false);
-                    if (session != null) {
-                        session.invalidate();
-                    }
-                    // 응답 설정
-                    response.setStatus(HttpServletResponse.SC_OK);
-                    response.getWriter().flush();
-                });
+        http.headers()
+                .frameOptions().disable(); // H2 콘솔 사용을 위해 프레임 옵션 비활성화
 
 
         http.exceptionHandling()
@@ -79,9 +69,8 @@ public class WebSecurityConfig {
 
     @Bean
     public TokenAuthenticationFilter tokenAuthenticationFilter() {
-        return new TokenAuthenticationFilter(tokenProvider, TokenAuthenticationManager, authenticationProvider);
+        return new TokenAuthenticationFilter(tokenProvider, tokenAuthenticationManager, authenticationProvider);
     }
-
 
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {

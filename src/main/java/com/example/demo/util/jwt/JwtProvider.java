@@ -34,13 +34,8 @@ public class JwtProvider {
 
     private String makeToken(Date expiry, User user) {
         Date now = new Date();
-        String snsIdOrEmail;
-        if (user.getProvider().equals("local")) {
-            snsIdOrEmail = user.getEmail();
-        }
-        else {
-            snsIdOrEmail = user.getSnsId();
-        }
+        String snsIdOrEmail = user.getProvider().equals("local") ? user.getEmail() : user.getSnsId();
+
         return Jwts.builder()
                 .setHeaderParam(Header.TYPE, Header.JWT_TYPE)
                 .setIssuer(jwtProperties.getIssuer())
