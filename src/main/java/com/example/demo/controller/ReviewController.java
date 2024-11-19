@@ -71,7 +71,7 @@ public class ReviewController {
     public ResponseEntity<String> toggleLike(@PathVariable Long reviewId, @RequestParam boolean like) {
         try {
             UserReview updatedReview = reviewService.toggleLike(reviewId, like);
-            return ResponseEntity.ok("좋아요를 수정 하였습니다." + updatedReview);
+            return ResponseEntity.ok("좋아요 수정." + updatedReview);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(404).body(e.getMessage());
         }

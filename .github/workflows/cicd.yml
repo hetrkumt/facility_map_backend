@@ -30,14 +30,18 @@ jobs:
           utcOffset: "+09:00"
 
       - name: Set artifact
-        run: echo "artifact=$(ls ./build/libs)" >> $GITHUB_ENV
+        run: |
+          ARTIFACT=$(ls ./build/libs/*.jar)
+          ARTIFACT_NAME=$(basename "$ARTIFACT")
+          echo "artifact=$ARTIFACT_NAME" >> $GITHUB_ENV
 
       - name: Beanstalk Deploy
         uses: einaregilsson/beanstalk-deploy@v20
         with:
+
           aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          application_name: facility-map
+          application_name: Facility_map
           environment_name: Facilitymap-env
           version_label: github-action-${{steps.current-time.outputs.formattedTime}}
           region: ap-northeast-2
