@@ -5,8 +5,6 @@ import com.example.demo.service.UserService;
 import com.example.demo.util.jwt.JwtProvider;
 import com.example.demo.util.Authentication.AuthenticationProvider;
 import com.example.demo.util.Authentication.tokenAuthentication.TokenAuthenticationManager;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,7 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
@@ -38,7 +35,7 @@ public class WebSecurityConfig {
         return (web) -> web.ignoring()
                 .requestMatchers("/img/**", "/css/**", "/js/**")
                 .requestMatchers(toH2Console())
-                .requestMatchers("/static/**");
+                .requestMatchers("/templates/**");
     }
 
     @Bean
@@ -53,7 +50,7 @@ public class WebSecurityConfig {
         http.addFilterBefore(tokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
         http.authorizeRequests()
-                .requestMatchers("/api").authenticated()
+                //.requestMatchers("/api").authenticated()
                 .anyRequest().permitAll();
 
         http.headers()

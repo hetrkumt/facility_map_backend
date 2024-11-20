@@ -18,7 +18,7 @@ public class Facility {
     private Long id;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "location_id", referencedColumnName = "id")
+    @JoinColumn(name = "geo_coordinates_id", referencedColumnName = "id")
     private GeoCoordinates GeoCoordinates;
 
     @OneToMany(mappedBy = "facility", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -33,7 +33,7 @@ public class Facility {
     @Column(nullable = false)
     private String description;
 
-    @Column(nullable = false)
+    @Column
     private String imageUrl;
 
     @Column(nullable = false)

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Upload and Display</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        #preview {
+            margin-top: 20px;
+            max-width: 300px;
+        }
+        #image-container img {
+            max-width: 300px;
+            margin: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 5px;
+        }
+    </style>
+</head>
+<body>
+<h1>Image Upload and Display</h1>
+
+<!-- Image Upload Form -->
+<form id="uploadForm">
+    <input type="file" id="imageInput" name="image" accept="image/*" required>
+    <button type="submit">Upload Image</button>
+</form>
+
+<!-- Preview Container -->
+<div id="preview"></div>
+
+<!-- Uploaded Images Container -->
+<h2>Uploaded Images</h2>
+<div id="image-container"></div>
+
+<script>
+        const uploadForm = document.getElementById('uploadForm');
+        const imageInput = document.getElementById('imageInput');
+        const preview = document.getElementById('preview');
+        const imageContainer = document.getElementById('image-container');
+
+        // Function to upload image
+        uploadForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const formData = new FormData();
+            formData.append('image', imageInput.files[0]);
+
+            try {
+                const response = await fetch('http://localhost:8080/images/upload', {
+                    method: 'POST',
+                    body: formData,
+                });
+
+                if (!response.ok) throw new Error('Failed to upload image.');
+
+                const imageData = await response.json();
+                alert(`Image uploaded successfully! ID: ${imageData.id}`);
+
+                // Display the uploaded image
+                addImageToContainer(imageData);
+            } catch (error) {
+                console.error(error);
+                alert('Error uploading image.');
+            }
+        });
+
+        // Function to add image to the container
+        function addImageToContainer(imageData) {
+            const img = document.createElement('img');
+            img.src = `http://localhost:8080/images/${imageData.id}`;
+            img.alt = imageData.fileName;
+            imageContainer.appendChild(img);
+        }
+
+        // Function to preview image before upload
+        imageInput.addEventListener('change', () => {
+            const file = imageInput.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = () => {
+                    preview.innerHTML = `<img src="${reader.result}" alt="Preview" id="preview-img">`;
+                };
+                reader.readAsDataURL(file);
+            } else {
+                preview.innerHTML = '';
+            }
+        });
+    </script>
+</body>
+</html>
