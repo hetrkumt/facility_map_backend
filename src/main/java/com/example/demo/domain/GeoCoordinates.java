@@ -19,7 +19,7 @@ public class GeoCoordinates {  // 클래스명 변경
     @Column(nullable = false)
     private double longitude;
 
-    @OneToOne(mappedBy = "GeoCoordinates")
+    @OneToOne(mappedBy = "geoCoordinates")
     private Facility facility;
 
     @Builder
