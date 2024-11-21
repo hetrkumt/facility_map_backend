@@ -1,4 +1,8 @@
 spring:
+  datasource:
+    url: jdbc:h2:mem:testdb;
+    username: sa
+
   servlet:
     multipart:
       max-file-size: 10MB

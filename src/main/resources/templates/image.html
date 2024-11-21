@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Loader</title>
+</head>
+<body>
+<h1>Image Loader</h1>
+<input type="text" id="imageName" placeholder="Enter image name">
+<button onclick="loadImage()">Load Image</button>
+<div id="imageContainer">
+    <p id="statusMessage"></p>
+    <img id="loadedImage" style="display:none;" alt="Loaded Image">
+</div>
+
+<script>
+        function loadImage() {
+            var imageName = document.getElementById("imageName").value;
+            var imageUrl = "http://localhost:8080/api/facility/image/" + imageName;  // 서버 주소와 이미지 경로 설정
+
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", imageUrl, true);
+            xhr.responseType = "blob";
+
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    var img = document.getElementById("loadedImage");
+                    img.src = URL.createObjectURL(xhr.response);
+                    img.style.display = "block";
+                    document.getElementById("statusMessage").textContent = "Image loaded successfully.";
+                } else {
+                    document.getElementById("statusMessage").textContent = "Failed to load image.";
+                }
+            };
+
+            xhr.onerror = function() {
+                document.getElementById("statusMessage").textContent = "Error occurred while loading image.";
+            };
+
+            xhr.send();
+        }
+    </script>
+</body>
+</html>

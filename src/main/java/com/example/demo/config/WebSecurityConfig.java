@@ -17,6 +17,9 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 
 import static org.springframework.boot.autoconfigure.security.servlet.PathRequest.toH2Console;
 
@@ -27,8 +30,18 @@ public class WebSecurityConfig {
     private final JwtProvider tokenProvider;
     private final TokenAuthenticationManager tokenAuthenticationManager;
     private final AuthenticationProvider authenticationProvider;
-    private final RefreshTokenRepository refreshTokenRepository;
-    private final UserService userService;
+
+    @Bean
+    public CorsFilter corsFilter() {
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowCredentials(true);
+        config.addAllowedOrigin("*");  // 필요한 도메인으로 제한할 수 있습니다.
+        config.addAllowedHeader("*");
+        config.addAllowedMethod("*");
+        source.registerCorsConfiguration("/**", config);
+        return new CorsFilter(source);
+    }
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
@@ -50,16 +63,16 @@ public class WebSecurityConfig {
         http.addFilterBefore(tokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
         http.authorizeRequests()
-                //.requestMatchers("/api").authenticated()
                 .anyRequest().permitAll();
 
         http.headers()
                 .frameOptions().disable(); // H2 콘솔 사용을 위해 프레임 옵션 비활성화
 
-
         http.exceptionHandling()
                 .defaultAuthenticationEntryPointFor(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED),
                         new AntPathRequestMatcher("/api/**"));
+
+        http.addFilterBefore(corsFilter(), UsernamePasswordAuthenticationFilter.class); // CORS 필터 추가
 
         return http.build();
     }
