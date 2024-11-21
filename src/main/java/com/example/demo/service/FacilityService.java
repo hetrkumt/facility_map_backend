@@ -108,8 +108,6 @@ public class FacilityService {
         }
     }
 
-
-
     public Facility getFacilityByCoordinates(double latitude, double longitude) {
         // 위도와 경도로 GeoCoordinates 엔티티 찾기
         GeoCoordinates geoCoordinates = geoCoordinatesRepository.findByLatitudeAndLongitude(latitude, longitude);
