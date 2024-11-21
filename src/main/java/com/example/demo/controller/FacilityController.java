@@ -36,10 +36,10 @@ public class FacilityController {
         return facilityService.getFacilityNamesByNameContaining(name);
     }
 
-    @PostMapping("update/facility/info")
-    public ResponseEntity<?> updateFacility(@ModelAttribute UpdateFacilityInfo updateFacilityInfo) {
+    @PutMapping("update/facility/info")
+    public ResponseEntity<?> updateFacility(@PathVariable Long facilityId, @ModelAttribute UpdateFacilityInfo updateFacilityInfo) {
         try {
-            Facility savedFacility = facilityService.saveFacility(updateFacilityInfo);
+            Facility savedFacility = facilityService.updateFacilityDetails(facilityId, updateFacilityInfo);
             return ResponseEntity.ok(savedFacility);
         } catch (IllegalArgumentException e) {
             e.printStackTrace();  // 예외 스택 트레이스 출력
@@ -52,8 +52,6 @@ public class FacilityController {
             return ResponseEntity.status(500).body("An unexpected error occurred");
         }
     }
-
-
 
     @GetMapping("/facility/info/by-coordinates")
     public ResponseEntity<MultiValueMap<String, Object>> getFacilityByCoordinates(@RequestParam double latitude, @RequestParam double longitude) {

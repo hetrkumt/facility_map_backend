@@ -126,9 +126,6 @@ public class AuthApiController {
         System.out.println("No user is currently logged in"); // 로그 추가
         return ResponseEntity.status(400).body("No user is currently logged in");
     }
-
-
-
 }
 
 
