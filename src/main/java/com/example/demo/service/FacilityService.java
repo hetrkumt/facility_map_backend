@@ -24,7 +24,9 @@ import java.util.stream.Collectors;
 
 @Service
 public class FacilityService {
+    @Autowired
     FacilityRepository facilityRepository;
+    @Autowired
     GeoCoordinatesRepository geoCoordinatesRepository;
 
     public Facility findById(Long facilityId) {
@@ -47,41 +49,66 @@ public class FacilityService {
     private ResourceLoader resourceLoader;
 
     public Facility saveFacility(UpdateFacilityInfo updateFacilityInfo) throws IOException {
-        // 1. 이미지 파일 저장
-        MultipartFile imageFile = updateFacilityInfo.getImage();
-        String originalFileName = imageFile.getOriginalFilename();
+        try {
+            // 1. 이미지 파일 저장
+            MultipartFile imageFile = updateFacilityInfo.getImage();
+            if (imageFile == null || imageFile.isEmpty()) {
+                throw new IllegalArgumentException("Uploaded image file is empty or null");
+            }
 
-        // 파일 이름 충돌 방지 (이미지 이름 + 시설 이름 + 현재 시간)
-        String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = updateFacilityInfo.getName() + "_" + timestamp + "_" + originalFileName;
+            String originalFileName = imageFile.getOriginalFilename();
+            if (originalFileName == null || originalFileName.isEmpty()) {
+                throw new IllegalArgumentException("Original file name is empty");
+            }
 
-        // 2. 실제 서버의 파일 시스템 경로를 얻기 위해 ResourceLoader 사용
-        Resource resource = resourceLoader.getResource("classpath:/static/images/");  // classpath 아래에 static/images/ 폴더
-        Path uploadPath = Paths.get(resource.getURI()).toAbsolutePath();
+            // 파일 이름 충돌 방지 (시설 이름 + 현재 시간 + 이미지 이름) 으로 파일 이름 설정
+            String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+            String imageFileName = updateFacilityInfo.getName() + "_" + timestamp + "_" + originalFileName;
 
-        // 파일 저장 경로
-        String imagePath = uploadPath.resolve(imageFileName).toString();  // 절대 경로
+            //파일 업로드 될 경로 지정
+            String uploadDirectory = Paths.get("src/main/resources/static/images/").toAbsolutePath().toString();
+            System.out.println("파일 업로드 경로: " + uploadDirectory);
 
-        // 파일을 지정된 폴더에 저장
-        File directory = uploadPath.toFile();
-        if (!directory.exists()) {
-            directory.mkdirs();  // 디렉토리가 없으면 생성
+            File directory = new File(uploadDirectory);
+            if (!directory.exists()) {
+                directory.mkdirs();  // 디렉토리가 없으면 생성
+            }
+
+            // 이미지 파일을 저장할 경로
+            String imagePath = uploadDirectory+ "/" + imageFileName;  // 절대 경로
+
+            // 현재 파일 경로 출력
+            System.out.println("파일 절대 경로: " + imagePath);
+
+            // 이미지 파일을 저장
+            imageFile.transferTo(new File(imagePath));
+
+            // 3. Facility 엔티티 생성
+            Facility facility = Facility.builder()
+                    .name(updateFacilityInfo.getName())
+                    .address(updateFacilityInfo.getAddress())
+                    .description(updateFacilityInfo.getDescription())
+                    .imageUrl(imageFileName)
+                    .build();
+
+            return facilityRepository.save(facility);
+
+        } catch (IllegalArgumentException e) {
+            // 예외 발생 시 메시지 출력
+            System.out.println("Invalid input: " + e.getMessage());
+            throw e; // 잘못된 입력 예외 다시 던지기
+        } catch (IOException e) {
+            // 예외 발생 시 메시지 출력
+            System.out.println("File processing error: " + e.getMessage());
+            throw e; // 파일 처리 예외 다시 던지기
+        } catch (Exception e) {
+            // 예외 발생 시 메시지 출력
+            System.out.println("Unexpected error occurred: " + e.getMessage());
+            throw new RuntimeException("An unexpected error occurred", e);
         }
-
-        // 이미지 파일을 저장
-        imageFile.transferTo(new File(imagePath));
-
-        // 3. Facility 엔티티 생성
-        Facility facility = Facility.builder()
-                .name(updateFacilityInfo.getName())
-                .address(updateFacilityInfo.getAddress())
-                .description(updateFacilityInfo.getDescription())
-                .imageUrl("/images/" + imageFileName)  // 클라이언트가 접근할 수 있는 경로로 설정
-                .build();
-
-        // 4. Facility 엔티티 저장
-        return facilityRepository.save(facility);
     }
+
+
 
     public Facility getFacilityByCoordinates(double latitude, double longitude) {
         // 위도와 경도로 GeoCoordinates 엔티티 찾기
@@ -96,3 +123,4 @@ public class FacilityService {
     }
 
 }
+

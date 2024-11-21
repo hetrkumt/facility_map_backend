@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -36,15 +37,23 @@ public class FacilityController {
     }
 
     @PostMapping("update/facility/info")
-    public ResponseEntity<Facility> updateFacility(@ModelAttribute UpdateFacilityInfo updateFacilityInfo) {
+    public ResponseEntity<?> updateFacility(@ModelAttribute UpdateFacilityInfo updateFacilityInfo) {
         try {
-            // Facility 저장
             Facility savedFacility = facilityService.saveFacility(updateFacilityInfo);
             return ResponseEntity.ok(savedFacility);
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();  // 예외 스택 트레이스 출력
+            return ResponseEntity.badRequest().body(e.getMessage()); // 잘못된 입력 시 400 응답
         } catch (IOException e) {
-            return ResponseEntity.status(500).body(null);
+            e.printStackTrace();  // 예외 스택 트레이스 출력
+            return ResponseEntity.status(500).body("File processing error occurred");
+        } catch (Exception e) {
+            e.printStackTrace();  // 예외 스택 트레이스 출력
+            return ResponseEntity.status(500).body("An unexpected error occurred");
         }
     }
+
+
 
     @GetMapping("/facility/info/by-coordinates")
     public ResponseEntity<MultiValueMap<String, Object>> getFacilityByCoordinates(@RequestParam double latitude, @RequestParam double longitude) {
@@ -74,15 +83,20 @@ public class FacilityController {
         }
     }
 
-    @GetMapping("facility/images/{imageName}")
+    @GetMapping("/facility/image/{imageName}")
     public ResponseEntity<Resource> getImage(@PathVariable String imageName) {
         try {
             // 서버에 실제로 저장된 경로를 얻기 위한 절대 경로
-            Resource resource = resourceLoader.getResource("file:/var/www/static/images/" + imageName);  // 서버의 절대 경로
-            if (resource.exists()) {
+            String uploadDirectory = Paths.get("src/main/resources/static/images/").toAbsolutePath().toString();
+            System.out.println("파일 업로드 경로: " + uploadDirectory);
+
+            String imagePath = uploadDirectory + "/" + imageName;
+            System.out.println("파일 경로: " + imagePath);
+            Resource resource = new UrlResource(Paths.get(imagePath).toUri());
+
+            if (resource.exists() || resource.isReadable()) {
                 return ResponseEntity.ok()
-                        .contentType(MediaType.IMAGE_JPEG)  // 이미지의 콘텐츠 타입 (JPEG, PNG 등)
-                        .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + imageName + "\"")
+                        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
                         .body(resource);
             } else {
                 return ResponseEntity.status(404).build();  // 이미지가 없으면 404 반환
