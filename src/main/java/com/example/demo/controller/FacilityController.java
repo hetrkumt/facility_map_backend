@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.domain.Facility;
 
+import com.example.demo.domain.FacilityType;
 import com.example.demo.dto.UpdateFacilityInfo;
 import com.example.demo.service.FacilityService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,7 +68,7 @@ public class FacilityController {
                 body.add("facility", facility);
 
                 // 이미지 경로
-                String imageUrl = facility.getImageUrl();  // "/images/facility_20241120_123456.jpg"와 같은 형식
+                String imageUrl = facility.getImageUrl();  // "facility_20241120_123456.jpg"와 같은 형식
 
                 // 클라이언트에서 접근할 수 있는 이미지 URL을 반환
                 body.add("imageUrl", imageUrl);
@@ -103,8 +104,22 @@ public class FacilityController {
             return ResponseEntity.status(500).build();  // 예외 발생 시 500 오류 반환
         }
     }
+    @GetMapping("/facilities/search")
+    public List<Facility> searchFacilities(@RequestParam(required = false) String name,
+                                           @RequestParam(required = false) FacilityType type) {
+        if (name != null && type != null) {
+            return facilityService.findByNameContainingAndType(name, type);
+        } else if (name != null) {
+            return facilityService.findByNameContaining(name);
+        } else if (type != null) {
+            return facilityService.findByType(type);
+        } else {
+            return facilityService.findAll();
+        }
+    }
 
 }
+
 
 
 

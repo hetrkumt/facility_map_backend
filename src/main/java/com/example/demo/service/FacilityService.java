@@ -1,16 +1,11 @@
 package com.example.demo.service;
 
-import com.example.demo.domain.Facility;
-import com.example.demo.domain.GeoCoordinates;
-import com.example.demo.domain.User;
-import com.example.demo.domain.UserReview;
+import com.example.demo.domain.*;
 import com.example.demo.dto.UpdateFacilityInfo;
 import com.example.demo.repository.FacilityRepository;
 import com.example.demo.repository.GeoCoordinatesRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -132,4 +127,22 @@ public class FacilityService {
         }
     }
 
+    public List<Facility> findByNameContaining(String name) {
+        return facilityRepository.findByNameContaining(name);
+    }
+
+    public List<Facility> findByType(FacilityType type) {
+        return facilityRepository.findByType(type);
+    }
+
+    public List<Facility> findByNameContainingAndType(String name, FacilityType type) {
+        return facilityRepository.findByNameContainingAndType(name, type);
+    }
+
+    public List<Facility> findAll() {
+        return facilityRepository.findAll();
+    }
+
+
 }
+

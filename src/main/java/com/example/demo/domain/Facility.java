@@ -38,8 +38,12 @@ public class Facility {
     @Column(nullable = false)
     private double rating;
 
+    @Enumerated(EnumType.STRING) // FacilityType 열거형을 문자열로 저장
+    @Column(nullable = false)
+    private FacilityType type; // 시설 종류 필드 추가
+
     @Builder
-    public Facility(String name, String address, String description, String imageUrl, double rating, GeoCoordinates geoCoordinates, Set<UserReview> reviews) {
+    public Facility(String name, String address, String description, String imageUrl, double rating, GeoCoordinates geoCoordinates, Set<UserReview> reviews, FacilityType type) {
         this.name = name;
         this.address = address;
         this.description = description;
@@ -47,6 +51,7 @@ public class Facility {
         this.rating = rating;
         this.geoCoordinates = geoCoordinates;
         this.reviews = reviews != null ? reviews : new HashSet<>();
+        this.type = type;
     }
 
     public Facility updateUserReview(UserReview userReview) {
