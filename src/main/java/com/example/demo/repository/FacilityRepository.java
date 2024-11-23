@@ -22,6 +22,9 @@ public interface FacilityRepository extends JpaRepository<Facility, Long> {
     List<Facility> findByNameContaining(String name);
     List<Facility> findByType(FacilityType type);
     List<Facility> findByNameContainingAndType(String name, FacilityType type);
+    @Query("SELECT f FROM Facility f JOIN FETCH f.geoCoordinates")
+    List<Facility> findAllWithGeoCoordinates();
+
 }
 
 

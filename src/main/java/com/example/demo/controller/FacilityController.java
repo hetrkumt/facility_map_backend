@@ -107,16 +107,24 @@ public class FacilityController {
     @GetMapping("/facilities/search")
     public List<Facility> searchFacilities(@RequestParam(required = false) String name,
                                            @RequestParam(required = false) FacilityType type) {
+        List<Facility> results;
+
         if (name != null && type != null) {
-            return facilityService.findByNameContainingAndType(name, type);
+            results = facilityService.findByNameContainingAndType(name, type);
         } else if (name != null) {
-            return facilityService.findByNameContaining(name);
+            results = facilityService.findByNameContaining(name);
         } else if (type != null) {
-            return facilityService.findByType(type);
+            results = facilityService.findByType(type);
         } else {
-            return facilityService.findAll();
+            results = facilityService.findAllWithGeoCoordinates();
         }
+
+        // 결과 출력
+        results.forEach(System.out::println);
+
+        return results;
     }
+
 
 }
 

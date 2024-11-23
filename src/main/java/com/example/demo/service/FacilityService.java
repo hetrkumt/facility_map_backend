@@ -139,8 +139,8 @@ public class FacilityService {
         return facilityRepository.findByNameContainingAndType(name, type);
     }
 
-    public List<Facility> findAll() {
-        return facilityRepository.findAll();
+    public List<Facility> findAllWithGeoCoordinates() {
+        return facilityRepository.findAllWithGeoCoordinates();
     }
 
 

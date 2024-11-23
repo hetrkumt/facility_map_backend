@@ -1,5 +1,7 @@
 package com.example.demo.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -20,6 +22,7 @@ public class GeoCoordinates {  // 클래스명 변경
     private double longitude;
 
     @OneToOne(mappedBy = "geoCoordinates")
+    @JsonManagedReference
     private Facility facility;
 
     @Builder
@@ -27,4 +30,6 @@ public class GeoCoordinates {  // 클래스명 변경
         this.latitude = latitude;
         this.longitude = longitude;
     }
+
 }
+
