@@ -47,7 +47,6 @@ public class WebSecurityConfig {
     public WebSecurityCustomizer webSecurityCustomizer() {
         return (web) -> web.ignoring()
                 .requestMatchers("/img/**", "/css/**", "/js/**")
-                .requestMatchers(toH2Console())
                 .requestMatchers("/templates/**");
     }
 
