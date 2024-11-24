@@ -11,9 +11,10 @@ spring:
 
 
   datasource:
-    url: jdbc:mysql://localhost:3306/facility_db
+    url: jdbc:mysql://localhost:3306/facility_db?useUnicode=true&characterEncoding=UTF-8
     username: root
     password: mysql
+
 
   jpa:
     database-platform: org.hibernate.dialect.MySQL57Dialect

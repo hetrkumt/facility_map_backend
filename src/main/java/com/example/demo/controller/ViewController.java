@@ -16,5 +16,4 @@ public class ViewController {
         return "image";
     }
 
-
 }

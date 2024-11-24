@@ -15,6 +15,8 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationSu
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
+import java.util.HashMap;
+import java.util.Map;
 
 @RequiredArgsConstructor
 @Component
@@ -27,7 +29,7 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
     private final RefreshTokenRepository refreshTokenRepository;
     private final UserRepository userRepository;
 
-    public String makeAccessTokenOnAuthenticationSuccess() {
+    public Map<String, String> makeTokensOnAuthenticationSuccess() {
         Authentication authentication = authenticationProvider.getAuthenticationFromSecurityContextHolder();
         User user = null;
         if (authentication != null && authentication.isAuthenticated()) {
@@ -36,9 +38,9 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
                 user = (User) principal;
                 System.out.println("Principal is an instance of User. User email: " + user.getEmail());
                 // User 타입에 대한 처리 로직 추가
-            } else{
+            } else {
                 OAuth2User oAuth2User = (OAuth2User) principal;
-                user = userRepository.findByEmail((String) oAuth2User.getAttributes().get("SnsId")).get();
+                user = userRepository.findBySnsId((String) oAuth2User.getAttributes().get("SnsId")).get();
                 System.out.println("Principal is an instance of OAuth2User. Attributes: " + oAuth2User.getAttributes());
                 // OAuth2User 타입에 대한 처리 로직 추가
             }
@@ -49,8 +51,13 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
         String accessToken = tokenProvider.generateToken(user, ACCESS_TOKEN_DURATION);
 
-        return String.valueOf(accessToken);
+        Map<String, String> tokens = new HashMap<>();
+        tokens.put("accessToken", accessToken);
+        tokens.put("refreshToken", refreshToken);
+
+        return tokens;
     }
+
 
 
     private void saveRefreshToken(Long userId, String newRefreshToken) {

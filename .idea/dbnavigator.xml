@@ -18,16 +18,16 @@
   <component name="DBNavigator.Project.DatabaseConsoleManager">
     <connection id="dd83b0d8-9d66-44bf-8530-834447b7713a">
       <console name="Connection" type="STANDARD" schema="" session="Main"><![CDATA[USE facility_db
-SELECT * FROM facilities]]></console>
+SELECT * FROM facilities
+
+SELECT f FROM Facility f LEFT JOIN FETCH f.reviews WHERE f.id = 1]]></console>
     </connection>
   </component>
   <component name="DBNavigator.Project.DatabaseEditorStateManager">
     <last-used-providers />
   </component>
   <component name="DBNavigator.Project.DatabaseFileManager">
-    <open-files>
-      <object connection-id="dd83b0d8-9d66-44bf-8530-834447b7713a" object-ref="consoles/Connection" />
-    </open-files>
+    <open-files />
   </component>
   <component name="DBNavigator.Project.DatabaseSessionManager">
     <connection id="dd83b0d8-9d66-44bf-8530-834447b7713a" />
@@ -46,6 +46,9 @@ SELECT * FROM facilities]]></console>
   <component name="DBNavigator.Project.ObjectQuickFilterManager">
     <last-used-operator value="EQUAL" />
     <filters />
+  </component>
+  <component name="DBNavigator.Project.ScriptExecutionManager" clear-outputs="true">
+    <recently-used-interfaces />
   </component>
   <component name="DBNavigator.Project.Settings">
     <connections>
@@ -541,7 +544,15 @@ SELECT * FROM facilities]]></console>
     </general-settings>
   </component>
   <component name="DBNavigator.Project.StatementExecutionManager">
-    <execution-variables />
-    <execution-variable-types />
+    <execution-variables>
+      <file file-url="db://dd83b0d8-9d66-44bf-8530-834447b7713a/consoles/Connection">
+        <variable name="id" data-type="LITERAL">
+          <value>1</value>
+        </variable>
+      </file>
+    </execution-variables>
+    <execution-variable-types>
+      <variable connection-id="dd83b0d8-9d66-44bf-8530-834447b7713a" name="id" data-type="LITERAL" />
+    </execution-variable-types>
   </component>
 </project>

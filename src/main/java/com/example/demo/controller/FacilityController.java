@@ -6,12 +6,10 @@ import com.example.demo.domain.FacilityType;
 import com.example.demo.dto.UpdateFacilityInfo;
 import com.example.demo.service.FacilityService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -104,6 +102,7 @@ public class FacilityController {
             return ResponseEntity.status(500).build();  // 예외 발생 시 500 오류 반환
         }
     }
+
     @GetMapping("/facilities/search")
     public List<Facility> searchFacilities(@RequestParam(required = false) String name,
                                            @RequestParam(required = false) FacilityType type) {
@@ -118,16 +117,14 @@ public class FacilityController {
         } else {
             results = facilityService.findAllWithGeoCoordinates();
         }
-
-        // 결과 출력
-        results.forEach(System.out::println);
-
         return results;
     }
 
-
+    @GetMapping("/facility/{facilityId}")
+    public Facility getFacilityWithReviews(@PathVariable Long facilityId) {
+        return facilityService.findById(facilityId);
+    }
 }
-
 
 
 

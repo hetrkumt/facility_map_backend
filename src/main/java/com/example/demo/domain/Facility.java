@@ -1,6 +1,7 @@
 package com.example.demo.domain;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
@@ -24,6 +25,7 @@ public class Facility {
     private GeoCoordinates geoCoordinates;
 
     @OneToMany(mappedBy = "facility", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private Set<UserReview> reviews;
 
     @Column(nullable = false, unique = true)
@@ -72,14 +74,6 @@ public class Facility {
 
         return this;
     }
-    @Override
-    public String toString() {
-        return "Facility{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", address='" + address + '\'' +
-                ", geoCoordinates=" + geoCoordinates +
-                '}';
-    }
+
 }
 
