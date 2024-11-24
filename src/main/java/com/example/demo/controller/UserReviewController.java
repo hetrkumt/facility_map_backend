@@ -13,7 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/review")
-public class ReviewController {
+public class UserReviewController {
 
     @Autowired
     private FacilityRepository facilityRepository;
@@ -77,3 +77,4 @@ public class ReviewController {
         }
     }
 }
+

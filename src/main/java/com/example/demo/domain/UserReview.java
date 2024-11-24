@@ -1,5 +1,8 @@
 package com.example.demo.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
@@ -16,10 +19,12 @@ public class UserReview {
 
     @ManyToOne
     @JoinColumn(name = "facility_id", nullable = false)
+    @JsonBackReference
     private Facility facility;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
+    @JsonBackReference
     private User user;
 
     @Column(nullable = false, length = 1000)

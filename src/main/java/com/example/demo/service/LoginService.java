@@ -26,8 +26,7 @@ public class LoginService {
         User PreAuthuser =  User.builder()
                 .email(dto.getEmail())
                 .password(dto.getPassword())
-                .nickname(dto.getNickname())
-                .provider(dto.getProvider())
+                .provider("Local")
                 .build();
         Authentication preAuthentication = authenticationProvider.makePreAuthenticationFrom(PreAuthuser);
         return loginAuthenticationManager.authenticateLocalPreAuthentication(preAuthentication);
@@ -36,8 +35,7 @@ public class LoginService {
     public AuthenticationResult OAuthLogin(OAuthLoginRequest dto) {
         User PreAuthuser =  User.builder()
                 .snsId(dto.getSnsId())
-                .provider(dto.getProvider())
-                .nickname(dto.getNickname())
+                .provider("OAuth")
                 .build();
         Authentication preAuthentication = authenticationProvider.makePreAuthenticationFrom(PreAuthuser);
         return loginAuthenticationManager.authenticateFormOAuthPreAuthentication(preAuthentication);

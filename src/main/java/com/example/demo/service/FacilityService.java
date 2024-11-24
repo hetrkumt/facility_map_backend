@@ -130,19 +130,18 @@ public class FacilityService {
     public List<Facility> findByNameContaining(String name) {
         return facilityRepository.findByNameContaining(name);
     }
-
     public List<Facility> findByType(FacilityType type) {
         return facilityRepository.findByType(type);
     }
-
     public List<Facility> findByNameContainingAndType(String name, FacilityType type) {
         return facilityRepository.findByNameContainingAndType(name, type);
     }
-
     public List<Facility> findAllWithGeoCoordinates() {
         return facilityRepository.findAllWithGeoCoordinates();
     }
-
+    public Optional<Facility> findByIdWithReviews(Long id) {
+        return facilityRepository.findByIdWithReviews(id);
+    }
 
 }
 
