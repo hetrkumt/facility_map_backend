@@ -24,6 +24,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/auth")
 public class AuthApiController {
@@ -73,39 +76,46 @@ public class AuthApiController {
     }
 
     @PostMapping("/local/login")
-    public ResponseEntity<String> localLogin(@RequestBody LocalLoginRequest dto) {
+    public ResponseEntity<Map<String, String>> localLogin(@RequestBody LocalLoginRequest dto) {
         AuthenticationResult result = loginService.localLogin(dto);
         return handleAuthenticationResult(result);
     }
 
     @PostMapping("/oauth/login")
-    public ResponseEntity<String> OAuthLogin(@RequestBody OAuthLoginRequest dto) {
+    public ResponseEntity<Map<String, String>> OAuthLogin(@RequestBody OAuthLoginRequest dto) {
         AuthenticationResult result = loginService.OAuthLogin(dto);
         return handleAuthenticationResult(result);
     }
 
-    private ResponseEntity<String> handleAuthenticationResult(AuthenticationResult result) {
+    private ResponseEntity<Map<String, String>> handleAuthenticationResult(AuthenticationResult result) {
         HttpHeaders headers = new HttpHeaders();
+        Map<String, String> tokens = new HashMap<>();
         switch (result) {
             case SUCCESS:
-                String newAccessToken = loginSuccessHandler.makeAccessTokenOnAuthenticationSuccess();
-                headers.add("Authorization", "Bearer " + newAccessToken);
+                tokens = loginSuccessHandler.makeTokensOnAuthenticationSuccess();
+                String accessToken = tokens.get("accessToken");
+                String refreshToken = tokens.get("refreshToken");
+                headers.add("AccessToken", accessToken);
+                headers.add("RefreshToken", refreshToken);
                 // 디버그 로그 추가
-                System.out.println("Access Token: " + newAccessToken);
+                System.out.println("Access Token: " + accessToken);
+                System.out.println("Refresh Token: " + refreshToken);
                 System.out.println("Response Headers: " + headers);
                 return ResponseEntity.ok()
                         .headers(headers)
-                        .body("Authentication successful.");
+                        .body(tokens);
+
             case USER_NOT_FOUND:
-                return ResponseEntity.status(404).body("User not found");
+                tokens.put("error", "User not found");
+                return ResponseEntity.status(404).body(tokens);
             case INVALID_PASSWORD:
-                return ResponseEntity.status(401).body("Invalid password");
+                tokens.put("error", "Invalid password");
+                return ResponseEntity.status(401).body(tokens);
             default:
-                return ResponseEntity.status(500).body("Authentication failed");
+                tokens.put("error", "Authentication failed");
+                return ResponseEntity.status(500).body(tokens);
         }
     }
-
-
 
     @PostMapping("/logout")
     public ResponseEntity<String> logout(HttpServletRequest request, HttpServletResponse response) {
@@ -114,12 +124,12 @@ public class AuthApiController {
             User user = authenticationProvider.getUserInfoFromSecurityContextHolder();
 
             // RefreshToken 삭제
-            System.out.println("User ID: " + user.getId()); // 로그 추가
+            System.out.println("User ID: " + user.getId());
             refreshTokenRepository.deleteByUserId(user.getId());
 
             new SecurityContextLogoutHandler().logout(request, response, authentication);
 
-            System.out.println("Logout successful for user ID: " + user.getId()); // 로그 추가
+            System.out.println("Logout successful for user ID: " + user.getId());
             return ResponseEntity.ok("Logout successful");
         }
 

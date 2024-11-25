@@ -7,6 +7,4 @@ import lombok.Setter;
 @Getter
 public class OAuthLoginRequest {
     private String SnsId;
-    private String Nickname;
-    private String Provider;
 }

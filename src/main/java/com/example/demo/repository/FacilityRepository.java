@@ -25,6 +25,8 @@ public interface FacilityRepository extends JpaRepository<Facility, Long> {
     @Query("SELECT f FROM Facility f JOIN FETCH f.geoCoordinates")
     List<Facility> findAllWithGeoCoordinates();
 
+    @Query("SELECT f FROM Facility f LEFT JOIN FETCH f.reviews WHERE f.id = :id")
+    Optional<Facility> findByIdWithReviews(@Param("id") Long id);
 }
 
 

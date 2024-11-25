@@ -8,6 +8,4 @@ import lombok.Setter;
 public class LocalLoginRequest {
     private String Email;
     private String password;
-    private String Nickname;
-    private String Provider;
 }

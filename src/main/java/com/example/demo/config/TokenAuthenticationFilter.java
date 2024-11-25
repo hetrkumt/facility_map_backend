@@ -32,46 +32,60 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         logRequestDetails(request);
 
         String authorizationHeader = request.getHeader(HEADER_AUTHORIZATION);
-        System.out.println("authorizationHeader="+authorizationHeader);
+        System.out.println("authorizationHeader=" + authorizationHeader);
         String token = getAccessToken(authorizationHeader);
-        System.out.println("Accesstoken="+token);
+        System.out.println("Access token=" + token);
 
         if (token != null) {
-            String refreshToken = tokenAuthenticationManager.getRefreshTokenFrom(token);
-            System.out.println(refreshToken);
-            TokenValidationResult tokenValidationResult = tokenAuthenticationManager.validateToken(refreshToken);
+            System.out.println("token=" + token);
+            TokenValidationResult tokenValidationResult = tokenAuthenticationManager.validateToken(token);
 
             if (tokenValidationResult == TokenValidationResult.VALID) {
-                Authentication authentication = tokenProvider.getAuthentication(refreshToken);
+                Authentication authentication = tokenProvider.getAuthentication(token);
                 authenticationProvider.setAuthenticationtoSecurityContextHolder(authentication);
             } else {
                 handleTokenValidationFailure(tokenValidationResult, response);
                 return;
             }
+        } else {
+            handleTokenValidationFailure(TokenValidationResult.MISSING, response);
+            return;
         }
 
         filterChain.doFilter(request, response);
     }
 
     private void handleTokenValidationFailure(TokenValidationResult tokenValidationResult, HttpServletResponse response) throws IOException {
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+
         switch (tokenValidationResult) {
             case MISSING:
+                //response.sendError(HttpServletResponse.SC_BAD_REQUEST, "{\"error\": \"Token is missing\"}");
+                break;
             case INVALID:
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "{\"error\": \"Invalid token\"}");
+                break;
             case MALFORMED:
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "{\"error\": \"Malformed token\"}");
+                break;
             case UNSUPPORTED:
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid token");
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "{\"error\": \"Unsupported token\"}");
                 break;
             case EXPIRED:
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token expired");
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "{\"error\": \"Token expired\"}");
                 break;
             case SIGNATURE_INVALID:
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid token signature");
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "{\"error\": \"Invalid token signature\"}");
                 break;
             default:
-                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "An unexpected error occurred");
+                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "{\"error\": \"An unexpected error occurred\"}");
                 break;
         }
     }
+
+
+
     private String getAccessToken(String authorizationHeader) {
         if (authorizationHeader != null && authorizationHeader.startsWith(ACCESS_TOKEN_PREFIX)) {
             return authorizationHeader.substring(ACCESS_TOKEN_PREFIX.length());
