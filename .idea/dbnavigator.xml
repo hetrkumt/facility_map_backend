@@ -12,25 +12,50 @@
   <component name="DBNavigator.Project.DatabaseBrowserManager">
     <autoscroll-to-editor value="false" />
     <autoscroll-from-editor value="true" />
-    <show-object-properties value="true" />
+    <show-object-properties value="false" />
     <loaded-nodes />
   </component>
   <component name="DBNavigator.Project.DatabaseConsoleManager">
     <connection id="dd83b0d8-9d66-44bf-8530-834447b7713a">
-      <console name="Connection" type="STANDARD" schema="" session="Main"><![CDATA[USE facility_db
+      <console name="Connection" type="STANDARD" schema="facility_db" session="Main"><![CDATA[USE facility_db
 SELECT * FROM facilities
 
-SELECT f FROM Facility f LEFT JOIN FETCH f.reviews WHERE f.id = 1]]></console>
+SELECT f FROM Facility f LEFT JOIN FETCH f.reviews WHERE f.id = 1
+
+SELECT * FROM users
+
+SELECT * FROM refresh_tokens
+
+DROP TABLE refresh_tokens
+
+DROP TABLE refersh_tokens
+
+CREATE TABLE refresh_tokens (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user_id BIGINT NOT NULL UNIQUE,
+    refresh_token VARCHAR(512) NOT NULL
+);
+
+SHOW TABLES]]></console>
     </connection>
   </component>
   <component name="DBNavigator.Project.DatabaseEditorStateManager">
     <last-used-providers />
   </component>
   <component name="DBNavigator.Project.DatabaseFileManager">
-    <open-files />
+    <open-files>
+      <object connection-id="dd83b0d8-9d66-44bf-8530-834447b7713a" object-ref="consoles/Connection" />
+    </open-files>
   </component>
   <component name="DBNavigator.Project.DatabaseSessionManager">
     <connection id="dd83b0d8-9d66-44bf-8530-834447b7713a" />
+  </component>
+  <component name="DBNavigator.Project.DatasetFilterManager">
+    <filter-actions connection-id="dd83b0d8-9d66-44bf-8530-834447b7713a" dataset="facility_db.refresh_tokens" active-filter-id="" />
+    <filter-actions connection-id="dd83b0d8-9d66-44bf-8530-834447b7713a" dataset="facility_db.refesh_tokens" active-filter-id="" />
+    <filter-actions connection-id="dd83b0d8-9d66-44bf-8530-834447b7713a" dataset="facility_db.facilities" active-filter-id="" />
+    <filter-actions connection-id="dd83b0d8-9d66-44bf-8530-834447b7713a" dataset="facility_db.refersh_tokens" active-filter-id="" />
+    <filter-actions connection-id="dd83b0d8-9d66-44bf-8530-834447b7713a" dataset="facility_db.geo_coordinates" active-filter-id="" />
   </component>
   <component name="DBNavigator.Project.ExecutionManager">
     <retain-sticky-names value="false" />
