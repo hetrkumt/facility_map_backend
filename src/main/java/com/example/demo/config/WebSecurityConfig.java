@@ -70,8 +70,6 @@ public class WebSecurityConfig {
                 .defaultAuthenticationEntryPointFor(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED),
                         new AntPathRequestMatcher("/api/**"));
 
-        http.addFilterBefore(corsFilter(), UsernamePasswordAuthenticationFilter.class); // CORS 필터 추가
-
         return http.build();
     }
 
