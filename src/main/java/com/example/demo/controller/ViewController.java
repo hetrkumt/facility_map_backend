@@ -11,9 +11,14 @@ public class ViewController {
         return "upload";
     }
 
-    @GetMapping("/image")
-    public String image() {
-        return "image";
+    @GetMapping("/addNotice")
+    public String addNotice() {
+        return "addNotice";
+    }
+
+    @GetMapping("/addFAQ")
+    public String addFAQ() {
+        return "addFAQ";
     }
 
 }

@@ -4,10 +4,13 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-@Table(name = "refresh_tokens")
+
+@Setter
+@Table(name = "refesh_tokens")
 @Entity
 public class RefreshToken {
     @Id

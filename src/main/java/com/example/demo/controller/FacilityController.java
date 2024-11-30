@@ -52,34 +52,6 @@ public class FacilityController {
         }
     }
 
-    @GetMapping("/facility/info/by-coordinates")
-    public ResponseEntity<MultiValueMap<String, Object>> getFacilityByCoordinates(@RequestParam double latitude, @RequestParam double longitude) {
-        try {
-            // 위도와 경도를 통해 Facility 찾기
-            Facility facility = facilityService.getFacilityByCoordinates(latitude, longitude);
-
-            if (facility != null) {
-                // Facility 객체 정보와 이미지를 반환할 MultiValueMap 생성
-                MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
-
-                // Facility 정보 (JSON 형식)
-                body.add("facility", facility);
-
-                // 이미지 경로
-                String imageUrl = facility.getImageUrl();  // "facility_20241120_123456.jpg"와 같은 형식
-
-                // 클라이언트에서 접근할 수 있는 이미지 URL을 반환
-                body.add("imageUrl", imageUrl);
-
-                return ResponseEntity.ok().body(body);  // Facility 정보와 이미지 URL을 응답으로 반환
-            } else {
-                return ResponseEntity.notFound().build();  // Facility 정보가 없으면 404 반환
-            }
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(null);  // 예외 발생 시 500 오류 반환
-        }
-    }
-
     @GetMapping("/facility/image/{imageName}")
     public ResponseEntity<Resource> getImage(@PathVariable String imageName) {
         try {

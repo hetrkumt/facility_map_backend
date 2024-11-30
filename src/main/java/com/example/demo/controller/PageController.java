@@ -8,6 +8,6 @@ public class PageController {
 
     @GetMapping("/")
     public String showUploadPage() {
-        return "upload"; // HTML 파일 이름 (확장자는 생략)
+        return "testhtml"; // HTML 파일 이름 (확장자는 생략)
     }
 }

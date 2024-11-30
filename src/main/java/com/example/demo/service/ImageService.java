@@ -1,52 +1,91 @@
 package com.example.demo.service;
 
-import com.example.demo.domain.Image;
-import com.example.demo.repository.ImageRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.LocalDateTime;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
 
 @Service
 public class ImageService {
+    public List<String> saveFacilityImageFiles(List<MultipartFile> imageFiles, String category) throws IOException {
+        List<String> imageFileNames = new ArrayList<>();
 
-    private final ImageRepository imageRepository;
-    private final String uploadDir = "C:/uploaded_images/";
+        for (MultipartFile imageFile : imageFiles) {
+            if (imageFile == null || imageFile.isEmpty()) {
+                return imageFileNames;
+            }
 
-    public ImageService(ImageRepository imageRepository) {
-        this.imageRepository = imageRepository;
-    }
+            String originalFileName = imageFile.getOriginalFilename();
 
-    public Image saveImage(MultipartFile file) throws IOException {
-        // 디렉토리 생성
-        Path uploadPath = Paths.get(uploadDir);
-        if (!Files.exists(uploadPath)) {
-            Files.createDirectories(uploadPath);
+            // 파일 이름 충돌 방지 (UUID + 현재 시간 + 이미지 이름) 으로 파일 이름 설정
+            String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+            String uniqueID = UUID.randomUUID().toString();
+            String imageFileName = uniqueID + "_" + timestamp + "_" + originalFileName;
+
+            // 파일 업로드 될 경로 지정 (카테고리에 따라 다르게 설정)
+            String uploadDirectory = Paths.get("src/main/resources/static/images/" + category).toAbsolutePath().toString();
+            System.out.println("파일 업로드 경로: " + uploadDirectory);
+
+            File directory = new File(uploadDirectory);
+            if (!directory.exists()) {
+                directory.mkdirs();  // 디렉토리가 없으면 생성
+            }
+
+            // 이미지 파일을 저장할 경로
+            String imagePath = uploadDirectory + File.separator + imageFileName;  // 절대 경로
+
+            // 현재 파일 경로 출력
+            System.out.println("파일 절대 경로: " + imagePath);
+
+            // 이미지 파일을 저장
+            imageFile.transferTo(new File(imagePath));
+
+            imageFileNames.add(imageFileName);
         }
 
-        // 파일 저장
-        String fileName = file.getOriginalFilename();
-        String filePath = uploadDir + fileName;
-        file.transferTo(new File(filePath));
-
-        // 엔티티 저장
-        Image image = new Image();
-        image.setFileName(fileName);
-        image.setFilePath(filePath);
-        image.setContentType(file.getContentType());
-        image.setSize(file.getSize());
-        image.setUploadTime(LocalDateTime.now());
-
-        return imageRepository.save(image);
+        return imageFileNames;
     }
 
-    public Image getImageById(Long id) {
-        return imageRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Image not found"));
+    public List<String> saveArticleImageFiles(List<MultipartFile> imageFiles, String category) throws IOException {
+        List<String> imageFileNames = new ArrayList<>();
+
+        for (MultipartFile imageFile : imageFiles) {
+            if (imageFile == null || imageFile.isEmpty()) {
+                return imageFileNames;
+            }
+
+            String originalFileName = imageFile.getOriginalFilename();
+
+            // 파일 업로드 될 경로 지정 (카테고리에 따라 다르게 설정)
+            String uploadDirectory = Paths.get("src/main/resources/static/images/" + category).toAbsolutePath().toString();
+            System.out.println("파일 업로드 경로: " + uploadDirectory);
+
+            File directory = new File(uploadDirectory);
+            if (!directory.exists()) {
+                directory.mkdirs();  // 디렉토리가 없으면 생성
+            }
+
+            // 이미지 파일을 저장할 경로
+            String imagePath = uploadDirectory + File.separator + originalFileName;  // 절대 경로
+
+            // 현재 파일 경로 출력
+            System.out.println("파일 절대 경로: " + imagePath);
+
+            // 이미지 파일을 저장
+            imageFile.transferTo(new File(imagePath));
+
+            imageFileNames.add(originalFileName);
+        }
+
+        return imageFileNames;
     }
 }
+
+

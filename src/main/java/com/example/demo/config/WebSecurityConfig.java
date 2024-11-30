@@ -66,9 +66,9 @@ public class WebSecurityConfig {
         http.headers()
                 .frameOptions().disable(); // H2 콘솔 사용을 위해 프레임 옵션 비활성화
 
-        http.exceptionHandling()
-                .defaultAuthenticationEntryPointFor(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED),
-                        new AntPathRequestMatcher("/api/**"));
+//        http.exceptionHandling()
+//                .defaultAuthenticationEntryPointFor(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED),
+//                        new AntPathRequestMatcher("/api/**"));
 
         return http.build();
     }
