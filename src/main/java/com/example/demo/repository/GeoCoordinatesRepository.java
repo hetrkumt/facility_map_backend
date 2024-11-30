@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
-
+@Repository
 public interface GeoCoordinatesRepository extends JpaRepository<GeoCoordinates, Long> {
 
     @Query("SELECT g FROM GeoCoordinates g JOIN FETCH g.facility WHERE " +

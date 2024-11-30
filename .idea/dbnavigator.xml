@@ -20,17 +20,92 @@
       <console name="Connection" type="STANDARD" schema="" session="Main"><![CDATA[USE facility_db
 SELECT * FROM facilities
 
-SELECT f FROM Facility f LEFT JOIN FETCH f.reviews WHERE f.id = 1]]></console>
+SELECT f FROM Facility f LEFT JOIN FETCH f.reviews WHERE f.id = 1
+
+SELECT * FROM users
+
+SELECT * FROM refresh_tokens
+
+SELECT * FROM notices
+
+SELECT * FROM faqs
+
+DROP TABLE refresh_tokens
+
+DROP TABLE refersh_tokens
+
+CREATE TABLE refresh_tokens (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user_id BIGINT NOT NULL UNIQUE,
+    refresh_token VARCHAR(512) NOT NULL
+);
+
+SHOW TABLES;
+
+-- 외래 키 제약 조건 해제
+SET FOREIGN_KEY_CHECKS = 0;
+
+-- `faq_images` 테이블에서 관련 데이터 삭제
+DELETE FROM faq_images WHERE faq_id IN (SELECT id FROM faqs);
+
+-- `faqs` 테이블에서 모든 데이터 삭제
+DELETE FROM faqs;
+
+-- `faqs` 테이블의 자동 증가 값 초기화
+ALTER TABLE faqs AUTO_INCREMENT = 1;
+
+-- 외래 키 제약 조건 다시 활성화
+SET FOREIGN_KEY_CHECKS = 1;
+
+ALTER TABLE notices MODIFY COLUMN content MEDIUMTEXT;
+ALTER TABLE faqs MODIFY COLUMN content MEDIUMTEXT;
+
+
+
+UPDATE faqs
+SET content = '<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>계정 관련 질문</title>
+</head>
+<body>
+<h1>계정 관련 질문</h1>
+<p>계정을 새로 만들려면 어떻게 해야 하나요?</p>
+<p>아래 단계를 따라 진행하시면 됩니다:</p>
+<img src="http://localhost:8080/images/FAQ/account_creation_step1.png/images/FAQ/account_creation_step1.png" alt="Account Creation Step 1"/>
+
+<p>이어서 추가 정보를 입력합니다:</p>
+<img src="http://localhost:8080/images/FAQ/account_creation_step2.png" alt="Account Creation Step 2"/>
+
+<p>모든 정보를 입력한 후, 등록 버튼을 클릭하세요.</p>
+</body>
+</html>'
+WHERE id = 1;]]></console>
+    </connection>
+    <connection id="91b15f80-1107-46be-8340-36f1ed555295">
+      <console name="Connection 1" type="STANDARD" schema="" session="Main" />
     </connection>
   </component>
   <component name="DBNavigator.Project.DatabaseEditorStateManager">
     <last-used-providers />
   </component>
   <component name="DBNavigator.Project.DatabaseFileManager">
-    <open-files />
+    <open-files>
+      <object connection-id="dd83b0d8-9d66-44bf-8530-834447b7713a" object-ref="consoles/Connection" />
+    </open-files>
   </component>
   <component name="DBNavigator.Project.DatabaseSessionManager">
     <connection id="dd83b0d8-9d66-44bf-8530-834447b7713a" />
+    <connection id="91b15f80-1107-46be-8340-36f1ed555295" />
+  </component>
+  <component name="DBNavigator.Project.DatasetFilterManager">
+    <filter-actions connection-id="dd83b0d8-9d66-44bf-8530-834447b7713a" dataset="facility_db.refresh_tokens" active-filter-id="" />
+    <filter-actions connection-id="dd83b0d8-9d66-44bf-8530-834447b7713a" dataset="facility_db.refesh_tokens" active-filter-id="" />
+    <filter-actions connection-id="dd83b0d8-9d66-44bf-8530-834447b7713a" dataset="facility_db.facilities" active-filter-id="" />
+    <filter-actions connection-id="dd83b0d8-9d66-44bf-8530-834447b7713a" dataset="facility_db.refersh_tokens" active-filter-id="" />
+    <filter-actions connection-id="dd83b0d8-9d66-44bf-8530-834447b7713a" dataset="facility_db.geo_coordinates" active-filter-id="" />
   </component>
   <component name="DBNavigator.Project.ExecutionManager">
     <retain-sticky-names value="false" />
@@ -71,6 +146,100 @@ SELECT f FROM Facility f LEFT JOIN FETCH f.reviews WHERE f.id = 1]]></console>
           <type value="USER_PASSWORD" />
           <user value="root" />
           <deprecated-pwd value="bXlzcWw=" />
+        </database>
+        <properties>
+          <auto-commit value="false" />
+        </properties>
+        <ssh-settings>
+          <active value="false" />
+          <proxy-host value="" />
+          <proxy-port value="22" />
+          <proxy-user value="" />
+          <deprecated-proxy-pwd value="" />
+          <auth-type value="PASSWORD" />
+          <key-file value="" />
+          <key-passphrase value="" />
+        </ssh-settings>
+        <ssl-settings>
+          <active value="false" />
+          <certificate-authority-file value="" />
+          <client-certificate-file value="" />
+          <client-key-file value="" />
+        </ssl-settings>
+        <details>
+          <charset value="UTF-8" />
+          <session-management value="true" />
+          <ddl-file-binding value="true" />
+          <database-logging value="true" />
+          <connect-automatically value="true" />
+          <restore-workspace value="true" />
+          <restore-workspace-deep value="false" />
+          <environment-type value="default" />
+          <connectivity-timeout value="30" />
+          <idle-time-to-disconnect value="30" />
+          <idle-time-to-disconnect-pool value="5" />
+          <credential-expiry-time value="10" />
+          <max-connection-pool-size value="7" />
+          <alternative-statement-delimiter value="" />
+        </details>
+        <debugger>
+          <compile-dependencies value="true" />
+          <tcp-driver-tunneling value="false" />
+          <tcp-host-address value="" />
+          <tcp-port-from value="4000" />
+          <tcp-port-to value="4999" />
+          <debugger-type value="ASK" />
+        </debugger>
+        <object-filters hide-empty-schemas="false" hide-pseudo-columns="false" hide-audit-columns="false">
+          <object-filters />
+          <object-type-filter use-master-settings="true">
+            <object-type name="SCHEMA" enabled="true" />
+            <object-type name="USER" enabled="true" />
+            <object-type name="ROLE" enabled="true" />
+            <object-type name="PRIVILEGE" enabled="true" />
+            <object-type name="CHARSET" enabled="true" />
+            <object-type name="TABLE" enabled="true" />
+            <object-type name="VIEW" enabled="true" />
+            <object-type name="MATERIALIZED_VIEW" enabled="true" />
+            <object-type name="NESTED_TABLE" enabled="true" />
+            <object-type name="COLUMN" enabled="true" />
+            <object-type name="INDEX" enabled="true" />
+            <object-type name="CONSTRAINT" enabled="true" />
+            <object-type name="DATASET_TRIGGER" enabled="true" />
+            <object-type name="DATABASE_TRIGGER" enabled="true" />
+            <object-type name="SYNONYM" enabled="true" />
+            <object-type name="SEQUENCE" enabled="true" />
+            <object-type name="PROCEDURE" enabled="true" />
+            <object-type name="FUNCTION" enabled="true" />
+            <object-type name="PACKAGE" enabled="true" />
+            <object-type name="TYPE" enabled="true" />
+            <object-type name="TYPE_ATTRIBUTE" enabled="true" />
+            <object-type name="ARGUMENT" enabled="true" />
+            <object-type name="DIMENSION" enabled="true" />
+            <object-type name="CLUSTER" enabled="true" />
+            <object-type name="DBLINK" enabled="true" />
+          </object-type-filter>
+        </object-filters>
+      </connection>
+      <connection id="91b15f80-1107-46be-8340-36f1ed555295" active="true" signed="true">
+        <database>
+          <name value="Connection 1" />
+          <description value="" />
+          <database-type value="MYSQL" />
+          <config-type value="BASIC" />
+          <database-version value="9999.0" />
+          <driver-source value="BUNDLED" />
+          <driver-library value="" />
+          <driver value="" />
+          <url-type value="DATABASE" />
+          <host value="localhost" />
+          <port value="3306" />
+          <database value="mysql" />
+          <tns-folder value="" />
+          <tns-profile value="" />
+          <type value="USER_PASSWORD" />
+          <user value="" />
+          <deprecated-pwd value="" />
         </database>
         <properties>
           <auto-commit value="false" />

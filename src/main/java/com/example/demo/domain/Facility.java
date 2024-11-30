@@ -1,10 +1,14 @@
 package com.example.demo.domain;
 
+import com.example.demo.domain.image.FacilityImage;
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.Builder;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -26,7 +30,11 @@ public class Facility {
 
     @OneToMany(mappedBy = "facility", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
-    private Set<UserReview> reviews;
+    private Set<UserReview> reviews = new HashSet<>();
+
+    @OneToMany(mappedBy = "facility", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private Set<FacilityImage> facilityImages = new HashSet<>();
 
     @Column(nullable = false, unique = true)
     private String name;
@@ -37,25 +45,22 @@ public class Facility {
     @Column(nullable = false)
     private String description;
 
-    @Column
-    private String imageUrl;
-
     @Column(nullable = false)
     private double rating;
 
-    @Enumerated(EnumType.STRING) // FacilityType 열거형을 문자열로 저장
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private FacilityType type; // 시설 종류 필드 추가
+    private FacilityType type;
 
     @Builder
-    public Facility(String name, String address, String description, String imageUrl, double rating, GeoCoordinates geoCoordinates, Set<UserReview> reviews, FacilityType type) {
+    public Facility(String name, String address, String description, double rating, GeoCoordinates geoCoordinates, Set<UserReview> reviews, Set<FacilityImage> facilityImages, FacilityType type) {
         this.name = name;
         this.address = address;
         this.description = description;
-        this.imageUrl = imageUrl;
         this.rating = rating;
         this.geoCoordinates = geoCoordinates;
         this.reviews = reviews != null ? reviews : new HashSet<>();
+        this.facilityImages = facilityImages != null ? facilityImages : new HashSet<>();
         this.type = type;
     }
 
@@ -65,7 +70,6 @@ public class Facility {
         }
         this.reviews.add(userReview);
 
-        // 모든 리뷰의 점수를 합산하여 평균을 계산
         double totalRating = 0;
         for (UserReview review : reviews) {
             totalRating += review.getRating();
@@ -75,5 +79,23 @@ public class Facility {
         return this;
     }
 
-}
+    public Facility updateFacility(String name, String address, String description, Set<FacilityImage> facilityImages) {
+        this.name = (name != null && !name.isEmpty()) ? name : this.name;
+        this.address = (address != null && !address.isEmpty()) ? address : this.address;
+        this.description = (description != null && !description.isEmpty()) ? description : this.description;
+        if (facilityImages != null && !facilityImages.isEmpty()) {
+            this.facilityImages.addAll(facilityImages);
+        }
+        return this;
+    }
 
+    public void addFacilityImages(FacilityImage facilityImage) {
+        this.facilityImages.add(facilityImage);
+        facilityImage.setFacility(this);
+    }
+
+    public void removeFacilityImage(FacilityImage facilityImage) {
+        this.facilityImages.remove(facilityImage);
+        facilityImage.setFacility(null);
+    }
+}

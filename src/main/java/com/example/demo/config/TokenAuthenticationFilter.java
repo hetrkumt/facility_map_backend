@@ -47,10 +47,11 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
                 handleTokenValidationFailure(tokenValidationResult, response);
                 return;
             }
-        } else {
-            handleTokenValidationFailure(TokenValidationResult.MISSING, response);
-            return;
         }
+//        else {
+//            handleTokenValidationFailure(TokenValidationResult.MISSING, response);
+//            return;
+//        }
 
         filterChain.doFilter(request, response);
     }
@@ -62,10 +63,10 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         switch (tokenValidationResult) {
             case MISSING:
                 //response.sendError(HttpServletResponse.SC_BAD_REQUEST, "{\"error\": \"Token is missing\"}");
-                break;
+                //break;
             case INVALID:
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "{\"error\": \"Invalid token\"}");
-                break;
+//                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "{\"error\": \"Invalid token\"}");
+//                break;
             case MALFORMED:
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "{\"error\": \"Malformed token\"}");
                 break;

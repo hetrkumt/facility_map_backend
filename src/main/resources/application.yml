@@ -9,6 +9,11 @@ spring:
       enabled: true
       force: true
 
+#  mvc:
+#    static-path-pattern: /images/**
+#  resources:
+#    static-locations: classpath:/static/images/
+
 
   datasource:
     url: jdbc:mysql://localhost:3306/facility_db?useUnicode=true&characterEncoding=UTF-8
