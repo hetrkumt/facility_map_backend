@@ -54,6 +54,11 @@ public class UserService {
                .orElseThrow(() -> new IllegalArgumentException("Unexpected user"));
     }
 
+    public User findByNickname(String nickname) {
+        return userRepository.findByNickname(nickname)
+                .orElseThrow(() -> new IllegalArgumentException("Unexpected user"));
+    }
+
     public User findBySnsId(String snsId) {
         return userRepository.findBySnsId(snsId)
                .orElseThrow(() -> new IllegalArgumentException("Unexpected user"));
@@ -74,5 +79,8 @@ public class UserService {
         return userRepository.findByEmail(email).isPresent();
     }
 
+    public boolean checkNicknameExists(String nickname)  {
+        return userRepository.findByNickname(nickname).isPresent();
+    }
 
 }

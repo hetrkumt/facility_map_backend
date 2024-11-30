@@ -70,7 +70,6 @@ public class WebSecurityConfig {
 //                .defaultAuthenticationEntryPointFor(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED),
 //                        new AntPathRequestMatcher("/api/**"));
 
-
         return http.build();
     }
 
