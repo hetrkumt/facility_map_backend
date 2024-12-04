@@ -17,7 +17,7 @@
   </component>
   <component name="DBNavigator.Project.DatabaseConsoleManager">
     <connection id="dd83b0d8-9d66-44bf-8530-834447b7713a">
-      <console name="Connection" type="STANDARD" schema="" session="Main"><![CDATA[USE facility_db
+      <console name="Connection" type="STANDARD" schema="facility_db" session="Main"><![CDATA[USE facility_db
 SELECT * FROM facilities
 
 SELECT f FROM Facility f LEFT JOIN FETCH f.reviews WHERE f.id = 1
@@ -25,10 +25,6 @@ SELECT f FROM Facility f LEFT JOIN FETCH f.reviews WHERE f.id = 1
 SELECT * FROM users
 
 SELECT * FROM refresh_tokens
-
-SELECT * FROM notices
-
-SELECT * FROM faqs
 
 DROP TABLE refresh_tokens
 
@@ -40,49 +36,7 @@ CREATE TABLE refresh_tokens (
     refresh_token VARCHAR(512) NOT NULL
 );
 
-SHOW TABLES;
-
--- 외래 키 제약 조건 해제
-SET FOREIGN_KEY_CHECKS = 0;
-
--- `faq_images` 테이블에서 관련 데이터 삭제
-DELETE FROM faq_images WHERE faq_id IN (SELECT id FROM faqs);
-
--- `faqs` 테이블에서 모든 데이터 삭제
-DELETE FROM faqs;
-
--- `faqs` 테이블의 자동 증가 값 초기화
-ALTER TABLE faqs AUTO_INCREMENT = 1;
-
--- 외래 키 제약 조건 다시 활성화
-SET FOREIGN_KEY_CHECKS = 1;
-
-ALTER TABLE notices MODIFY COLUMN content MEDIUMTEXT;
-ALTER TABLE faqs MODIFY COLUMN content MEDIUMTEXT;
-
-
-
-UPDATE faqs
-SET content = '<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>계정 관련 질문</title>
-</head>
-<body>
-<h1>계정 관련 질문</h1>
-<p>계정을 새로 만들려면 어떻게 해야 하나요?</p>
-<p>아래 단계를 따라 진행하시면 됩니다:</p>
-<img src="http://localhost:8080/images/FAQ/account_creation_step1.png/images/FAQ/account_creation_step1.png" alt="Account Creation Step 1"/>
-
-<p>이어서 추가 정보를 입력합니다:</p>
-<img src="http://localhost:8080/images/FAQ/account_creation_step2.png" alt="Account Creation Step 2"/>
-
-<p>모든 정보를 입력한 후, 등록 버튼을 클릭하세요.</p>
-</body>
-</html>'
-WHERE id = 1;]]></console>
+SHOW TABLES]]></console>
     </connection>
     <connection id="91b15f80-1107-46be-8340-36f1ed555295">
       <console name="Connection 1" type="STANDARD" schema="" session="Main" />
@@ -92,9 +46,7 @@ WHERE id = 1;]]></console>
     <last-used-providers />
   </component>
   <component name="DBNavigator.Project.DatabaseFileManager">
-    <open-files>
-      <object connection-id="dd83b0d8-9d66-44bf-8530-834447b7713a" object-ref="consoles/Connection" />
-    </open-files>
+    <open-files />
   </component>
   <component name="DBNavigator.Project.DatabaseSessionManager">
     <connection id="dd83b0d8-9d66-44bf-8530-834447b7713a" />
