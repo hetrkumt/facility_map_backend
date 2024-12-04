@@ -40,6 +40,9 @@ CREATE TABLE refresh_tokens (
     user_id BIGINT NOT NULL UNIQUE,
     refresh_token VARCHAR(512) NOT NULL
 );
+
+
+
 SHOW TABLES;
 
 -- 외래 키 제약 조건 해제
@@ -83,6 +86,7 @@ SET content = '<!DOCTYPE html>
 </body>
 </html>'
 WHERE id = 1;]]></console>
+
     </connection>
     <connection id="91b15f80-1107-46be-8340-36f1ed555295">
       <console name="Connection 1" type="STANDARD" schema="" session="Main" />
@@ -93,9 +97,7 @@ WHERE id = 1;]]></console>
     <last-used-providers />
   </component>
   <component name="DBNavigator.Project.DatabaseFileManager">
-    <open-files>
-      <object connection-id="dd83b0d8-9d66-44bf-8530-834447b7713a" object-ref="consoles/Connection" />
-    </open-files>
+    <open-files />
   </component>
   <component name="DBNavigator.Project.DatabaseSessionManager">
     <connection id="dd83b0d8-9d66-44bf-8530-834447b7713a" />
