@@ -47,7 +47,7 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
         }
 
         String refreshToken = tokenProvider.generateToken(user, REFRESH_TOKEN_DURATION);
-        saveRefreshToken(user.getId(), refreshToken);
+         saveRefreshToken(user.getId(), refreshToken);
 
         String accessToken = tokenProvider.generateToken(user, ACCESS_TOKEN_DURATION);
 
@@ -58,13 +58,19 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
         return tokens;
     }
 
-
-
     private void saveRefreshToken(Long userId, String newRefreshToken) {
         RefreshToken refreshToken = refreshTokenRepository.findByUserId(userId)
-                .map(entity -> entity.update(newRefreshToken))
-                .orElse(new RefreshToken(userId, newRefreshToken));
+                .map(entity -> {
+                    System.out.println("Existing refresh token found for user ID: " + userId);
+                    return entity.update(newRefreshToken);
+                })
+                .orElseGet(() -> {
+                    System.out.println("No existing refresh token found, creating new one for user ID: " + userId);
+                    return new RefreshToken(userId, newRefreshToken);
+                });
 
         refreshTokenRepository.save(refreshToken);
+        System.out.println("Refresh token for user ID " + userId + " has been saved: " + newRefreshToken);
     }
+
 }

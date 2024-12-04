@@ -8,6 +8,7 @@ import lombok.Setter;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
+
 @Setter
 @Table(name = "refesh_tokens")
 @Entity

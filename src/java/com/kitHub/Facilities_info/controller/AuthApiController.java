@@ -56,13 +56,13 @@ public class AuthApiController {
     }
 
 
-    @GetMapping("/checkNickname/{nickname}")
+    @GetMapping("/checknickname/{nickname}")
     public ResponseEntity<String> checkNickname(@PathVariable String nickname) {
         boolean exists = userService.checkNicknameExists(nickname);
         if (exists) {
-            return ResponseEntity.status(409).body("이미 사용 중인 닉네임입니다.");
+            return ResponseEntity.status(409).body("이미 사용 중인 nickname 입니다.");
         } else {
-            return ResponseEntity.ok("사용 가능한 닉네임입니다.");
+            return ResponseEntity.ok("사용 가능한 이메일입니다.");
         }
     }
 
@@ -106,8 +106,10 @@ public class AuthApiController {
                 tokens = loginSuccessHandler.makeTokensOnAuthenticationSuccess();
                 String accessToken = tokens.get("accessToken");
                 String refreshToken = tokens.get("refreshToken");
+
                 headers.add("AccessToken", accessToken);
                 headers.add("RefreshToken", refreshToken);
+
                 // 디버그 로그 추가
                 System.out.println("Access Token: " + accessToken);
                 System.out.println("Refresh Token: " + refreshToken);

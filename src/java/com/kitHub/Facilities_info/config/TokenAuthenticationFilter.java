@@ -67,6 +67,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
             case MISSING:
                 //response.sendError(HttpServletResponse.SC_BAD_REQUEST, "{\"error\": \"Token is missing\"}");
                 //break;
+
             case INVALID:
                 //response.sendError(HttpServletResponse.SC_BAD_REQUEST, "{\"error\": \"Invalid token\"}");
                 //break;
